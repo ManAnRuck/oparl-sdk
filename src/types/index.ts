@@ -1,8 +1,4 @@
-type Overwrite<T, U> = Pick<T, Exclude<keyof T, keyof U>> & U;
-
-export const API_BODY =
-  "https://sdnetrim.kdvz-frechen.de/rim4883/webservice/oparl/v1.1/body/1";
-// "https://ris.schwalmtal.de/webservice/oparl/v1.0/body/1";
+export * from "./typeGuards";
 
 export interface ExternalList<T> {
   data: T[];
@@ -13,12 +9,17 @@ export interface ExternalList<T> {
     totalPages: number;
   };
   links: {
-    first: string;
-    self: string;
-    last: string;
+    first?: string;
+    self?: string;
+    last?: string;
     prev?: string;
-    next?: string;
+    next: string;
   };
+  first?: () => Promise<ExternalList<T>>;
+  self?: () => Promise<ExternalList<T>>;
+  last?: () => Promise<ExternalList<T>>;
+  prev?: () => Promise<ExternalList<T>>;
+  next: () => Promise<ExternalList<T>>;
 }
 export interface Body {
   id: string;
@@ -34,9 +35,9 @@ export interface Body {
   equivalent?: string[];
   contactEmail?: string;
   contactName?: string;
-  organization: Organization[];
+  organization: string;
   person: Person[];
-  meeting: Meeting[];
+  meeting: string;
   paper: Paper[];
   legislativeTerm: LegislativeTerm[];
   agendaItem?: AgendaItem[];
