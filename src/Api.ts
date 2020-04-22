@@ -27,20 +27,20 @@ export class Api {
     this.api = api;
     // this.api = axios.create(config);
     this.api.interceptors.request.use((param: AxiosRequestConfig) => ({
-      ...param
+      ...param,
     }));
   }
 
   private getInstanceWithCache = () => {
     const client = redis.createClient({
-      url: "redis://localhost:6379"
+      url: "redis://localhost:6379",
     });
     const store = new RedisStore(client);
     return setup({
       cache: {
         maxAge: 24 * 60 * 60 * 1000,
-        store
-      }
+        store,
+      },
     });
   };
 

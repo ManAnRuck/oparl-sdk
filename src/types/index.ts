@@ -1,4 +1,54 @@
+import { AxiosError } from "axios";
+
 export * from "./typeGuards";
+
+export type OparError = AxiosError;
+
+export type ItemTypes =
+  | Body
+  | Organization
+  | Location
+  | Membership
+  | Person
+  | Meeting
+  | File
+  | Paper
+  | LegislativeTerm
+  | AgendaItem;
+
+export interface EndpointList {
+  data: Endpoint[];
+  meta: {
+    page: number;
+    total: number;
+    next: string;
+  };
+}
+export interface Endpoint {
+  id: number;
+  url: string;
+  osm?: number;
+  wikidata?: string;
+  title: string;
+  description?: string;
+  bodyCount?: number;
+  fetched?: string;
+  system: System;
+}
+
+export interface System {
+  id: string;
+  type: string;
+  oparlVersion: string;
+  license?: string;
+  body: string;
+  name: string;
+  contactEmail: string;
+  contactName: string;
+  website: string;
+  vendor: string;
+  product: string;
+}
 
 export interface ExternalList<T> {
   data: T[];
@@ -25,6 +75,7 @@ export interface Body {
   id: string;
   type: string;
   system?: string;
+  shortName?: string;
   name: string;
   website?: string;
   license?: string;
@@ -36,18 +87,18 @@ export interface Body {
   contactEmail?: string;
   contactName?: string;
   organization: string;
-  person: Person[];
+  person: string;
   meeting: string;
-  paper: Paper[];
+  paper: string; // Paper ExternalList
   legislativeTerm: LegislativeTerm[];
-  agendaItem?: AgendaItem[];
-  consultation?: any[];
-  file?: File[];
-  locationList?: any[];
-  legislativeTermList?: any[];
-  membership?: Membership[];
+  agendaItem?: string; // AgendaItem ExternalList
+  consultation?: string; // Consultation ExternalList
+  file?: string;
+  locationList?: string;
+  legislativeTermList?: string; // LegislativeTerm ExternalList
+  membership?: string; // Membership ExternalList
   classification?: string;
-  location?: any;
+  location?: Location;
   mainOrganization?: Organization;
   keyword?: string[];
   created?: string;
@@ -58,11 +109,11 @@ export interface Body {
 export interface Organization {
   id: string;
   type: string;
-  Body?: Body;
+  body?: string | Body;
   name?: string;
   membership?: Membership[];
   meeting?: Meeting[];
-  consultation?: any;
+  consultation?: Consultation;
   shortName?: string;
   post?: string[];
   subOrganizationOf?: Organization;
@@ -71,7 +122,7 @@ export interface Organization {
   startDate?: string;
   endDate?: string;
   website?: string;
-  location?: any;
+  location?: Location;
   externalBody?: Body;
   license?: string;
   keyword?: string[];
@@ -84,8 +135,8 @@ export interface Organization {
 export interface Membership {
   id: string;
   type: string;
-  person?: Person;
-  Organization?: Organization;
+  person?: string; // Person
+  organization?: string; //Organization
   role?: string;
   votingRight?: boolean;
   startDate?: string;
@@ -102,7 +153,7 @@ export interface Membership {
 export interface Person {
   id: string;
   type: string;
-  Body?: Body;
+  body?: string; // Body id url
   name?: string;
   familyName?: string;
   givenName?: string;
@@ -112,10 +163,10 @@ export interface Person {
   gender?: string;
   phone?: string[];
   email?: string[];
-  location?: any;
+  location?: string; // Location id
   locationObject?: any;
   status?: string[];
-  membership?: Membership[];
+  membership?: string[]; // Membership id urls
   image?: any;
   life?: string;
   lifeSource?: string;
@@ -130,14 +181,15 @@ export interface Person {
 export interface Meeting {
   id: string;
   type: string;
+  body?: string | Body;
   name?: string;
   meetingState?: string;
   cancelled?: boolean;
   start?: string;
   end?: string;
-  location?: any;
-  organization?: Organization[];
-  participant?: Person[];
+  location?: Location;
+  organization?: string[]; // ids of Organization
+  participant?: string[]; // Person ids
   invitation?: File;
   resultsProtocol?: File;
   verbatimProtocol?: File;
@@ -153,6 +205,7 @@ export interface Meeting {
 
 export interface File {
   id: string;
+  body: string;
   type: string;
   accessUrl: string;
   name?: string;
@@ -183,8 +236,8 @@ export interface File {
 export interface Paper {
   id: string;
   type: string;
-  body?: Body;
   name?: string;
+  body?: string;
   reference?: string;
   date?: string;
   paperType?: string;
@@ -193,11 +246,11 @@ export interface Paper {
   subordinatedPaper?: Paper[];
   mainFile?: File;
   auxiliaryFile?: File[];
-  location?: any[];
+  location?: Location[];
   originatorPerson?: Person[];
   underDirectionOf?: Organization[];
   originatorOrganization?: Organization[];
-  consultation?: any[];
+  consultation?: Consultation[];
   license?: string;
   keyword?: string[];
   created?: string;
@@ -209,7 +262,7 @@ export interface Paper {
 export interface LegislativeTerm {
   id: string;
   type: string;
-  body?: Body;
+  body?: string; // Body id
   name?: string;
   startDate?: string;
   endDate?: string;
@@ -224,18 +277,59 @@ export interface LegislativeTerm {
 export interface AgendaItem {
   id: string;
   type: string;
+  body?: string; // Body id
   order: number;
-  meeting?: Meeting;
+  meeting?: string; // Meeting id
   number?: string;
   name?: string;
   public?: boolean;
-  consultation?: any;
+  consultation?: Consultation;
   result?: string;
   resolutionText?: string;
   resolutionFile?: File;
   auxiliaryFile?: File[];
   start?: string;
   end?: string;
+  license?: string;
+  keyword?: string[];
+  created?: string;
+  modified?: string;
+  web?: string;
+  deleted?: boolean;
+}
+
+export interface Location {
+  id: string;
+  type: string;
+  description?: string;
+  geojson?: any;
+  streetAddress?: string;
+  room?: string;
+  postalCode?: string;
+  subLocality?: string;
+  locality?: string;
+  bodies?: string[];
+  organizations?: Organization[] | string[];
+  persons?: Person[] | string[];
+  meetings?: Meeting[] | string[];
+  papers?: Paper[] | string[];
+  license?: string;
+  keyword?: string[];
+  created?: string;
+  modified?: string;
+  web?: string;
+  deleted?: boolean;
+}
+
+export interface Consultation {
+  id: string;
+  type: string;
+  paper?: string; // Paper
+  agendaItem?: string; // AgendaItem
+  meeting?: string; // Meeting
+  organization?: string[]; // Organizations
+  authoritative?: boolean;
+  role?: string;
   license?: string;
   keyword?: string[];
   created?: string;
