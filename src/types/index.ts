@@ -40,6 +40,7 @@ export interface System {
   id: string;
   type: string;
   oparlVersion: string;
+  otherOparlVersions: string[]; // System
   license?: string;
   body: string;
   name: string;
@@ -48,6 +49,10 @@ export interface System {
   website: string;
   vendor: string;
   product: string;
+  created?: string;
+  modified?: string;
+  web?: string;
+  deleted?: boolean;
 }
 
 export interface ExternalList<T> {
