@@ -12,6 +12,7 @@
     "axios": "^0.19.2",
     "axios-cache-adapter": "^2.5.0",
     "axios-rate-limit": "^1.2.1",
+    "axios-retry": "^3.1.6",
     "redis": "^3.0.2"
   },
   "devDependencies": {

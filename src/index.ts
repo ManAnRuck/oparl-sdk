@@ -22,6 +22,7 @@ import {
   EndpointList,
   isEndpointList,
   System,
+  Endpoint,
 } from "./types";
 
 interface OparlOptions extends ApiOptions {
@@ -58,7 +59,7 @@ class Oparl extends Api {
     return this._entrypoint;
   }
 
-  private get system() {
+  public get system() {
     return (async () => {
       if (!this._system) {
         return await this.getSystem().then((system) => {
@@ -86,9 +87,9 @@ class Oparl extends Api {
   }
 
   public static getEndpoints = () => {
-    return Axios.get<EndpointList>("https://dev.oparl.org/api/endpoints").then(
-      ({ data }) => data.data
-    );
+    return Axios.get<EndpointList>(
+      "https://dev.oparl.org/api/endpoints?page=1&limit=50"
+    ).then(({ data }) => data);
   };
 
   public getData = <T extends DataTypes>(url: string) => {
@@ -101,6 +102,16 @@ class Oparl extends Api {
           prev: prev && self !== prev ? () => this.getData<T>(prev) : undefined,
           next: next && self !== next ? () => this.getData<T>(next) : undefined,
           last: last && self !== last ? () => this.getData<T>(last) : undefined,
+        };
+        return {
+          ...data,
+          ...helpers,
+        };
+      }
+      if (isEndpointList(data)) {
+        const { next } = data.meta;
+        const helpers = {
+          next: next ? () => this.getData<T>(next) : undefined,
         };
         return {
           ...data,

@@ -2,8 +2,7 @@ import { Oparl } from "./index";
 import { Person, AgendaItem, Body, Meeting, ExternalList } from "./types";
 
 const oparl = new Oparl({
-  entrypoint:
-    "https://sdnetrim.kdvz-frechen.de/rim4883/webservice/oparl/v1.1/system",
+  entrypoint: "https://www.muenchen-transparent.de/oparl/v1.0",
   limit: {
     maxRequests: 5,
     perMilliseconds: 1000,
@@ -15,23 +14,32 @@ const oparl = new Oparl({
   // let endpoints = await Oparl.getEndpoints();
   // console.log(endpoints);
 
-  // let system = await oparl.getSystem();
-  // console.log(system);
-
-  let bodies = await oparl.getBodies();
-  console.log(bodies);
-
-  // const body = await oparl.body;
-  // console.log(body);
-
-  // let organizuations = await oparl.getOrganizations();
-  // console.log(organizuations);
-  // while (organizuations?.next) {
-  //   organizuations = await organizuations.next().then((data) => {
+  // let endpoints = await Oparl.getEndpoints();
+  // console.log(endpoints);
+  // while (endpoints.next) {
+  //   endpoints = await endpoints.next().then((data) => {
   //     console.log(data);
   //     return data;
   //   });
   // }
+
+  // let system = await oparl.getSystem();
+  // console.log(system);
+
+  // let bodies = await oparl.getBodies();
+  // console.log(bodies);
+
+  // const body = await oparl.body;
+  // console.log(body);
+
+  let organizuations = await oparl.getOrganizations();
+  console.log(organizuations);
+  while (organizuations?.next) {
+    organizuations = await organizuations.next().then((data) => {
+      console.log(data);
+      return data;
+    });
+  }
 
   // let meetings = await oparl.getMeetings();
   // console.log(meetings);

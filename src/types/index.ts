@@ -23,6 +23,7 @@ export interface EndpointList {
     total: number;
     next: string;
   };
+  next?: () => Promise<EndpointList>;
 }
 export interface Endpoint {
   id: number;

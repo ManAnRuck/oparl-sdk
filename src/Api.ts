@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import rateLimit from "axios-rate-limit";
 import { RedisStore, setup } from "axios-cache-adapter";
+import axiosRetry, { IAxiosRetryConfig } from "axios-retry";
 const redis = require("redis");
 
 export interface ApiOptions {
@@ -9,6 +10,7 @@ export interface ApiOptions {
     maxRequests: number;
     perMilliseconds: number;
   };
+  retryConfig?: IAxiosRetryConfig;
 }
 
 export class Api {
@@ -23,6 +25,9 @@ export class Api {
     }
     if (options?.limit) {
       api = rateLimit(api, options.limit);
+    }
+    if (options.retryConfig) {
+      axiosRetry(api, options.retryConfig);
     }
     this.api = api;
     // this.api = axios.create(config);
