@@ -33,6 +33,7 @@ export type DataTypes =
   | Body
   | Organization
   | ExternalList<Organization>
+  | EndpointList
   | Location
   | ExternalList<Location>
   | Membership
@@ -92,9 +93,10 @@ class Oparl extends Api {
   }
 
   public static getEndpoints = () => {
-    return Axios.get<EndpointList>(
-      "https://dev.oparl.org/api/endpoints?page=1&limit=50"
-    ).then(({ data }) => data);
+    const oparl = new Oparl({ entrypoint: "" }); // TODO handle unnecessary entrypoint option
+    return oparl.getData<EndpointList>(
+      "https://dev.oparl.org/api/endpoints?page=1&limit=25"
+    );
   };
 
   public getData = <T extends DataTypes>(url: string) => {

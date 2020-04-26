@@ -14,14 +14,15 @@ const oparl = new Oparl({
   // let endpoints = await Oparl.getEndpoints();
   // console.log(endpoints);
 
-  // let endpoints = await Oparl.getEndpoints();
-  // console.log(endpoints);
-  // while (endpoints.next) {
-  //   endpoints = await endpoints.next().then((data) => {
-  //     console.log(data);
-  //     return data;
-  //   });
-  // }
+  let endpoints = await Oparl.getEndpoints();
+  console.log(endpoints.next);
+  console.log(endpoints.meta);
+  while (endpoints.next) {
+    endpoints = await endpoints.next().then((data) => {
+      console.log(data.meta);
+      return data;
+    });
+  }
 
   // let system = await oparl.getSystem();
   // console.log(system);
@@ -29,17 +30,17 @@ const oparl = new Oparl({
   // let bodies = await oparl.getBodies();
   // console.log(bodies);
 
-  const bodies = await oparl.bodies;
-  const r = bodies.map(async (body) => {
-    let organizuations = await oparl.getOrganizations(body);
-    console.log({ organizuations });
-    // while (organizuations?.next) {
-    //   organizuations = await organizuations.next();
-    //   console.log(organizuations);
-    // }
-  });
+  // const bodies = await oparl.bodies;
+  // const r = bodies.map(async (body) => {
+  //   let organizuations = await oparl.getOrganizations(body);
+  //   console.log({ organizuations });
+  //   // while (organizuations?.next) {
+  //   //   organizuations = await organizuations.next();
+  //   //   console.log(organizuations);
+  //   // }
+  // });
 
-  await Promise.all(r);
+  // await Promise.all(r);
 
   // const body = await oparl.body;
   // console.log(body);
