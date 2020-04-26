@@ -3,11 +3,11 @@ import { Person, AgendaItem, Body, Meeting, ExternalList } from "./types";
 
 const oparl = new Oparl({
   entrypoint: "https://www.muenchen-transparent.de/oparl/v1.0",
-  limit: {
-    maxRequests: 5,
-    perMilliseconds: 1000,
-  },
-  withCache: true,
+  // limit: {
+  //   maxRequests: 5,
+  //   perMilliseconds: 1000,
+  // },
+  // withCache: true,
 });
 
 (async () => {
@@ -29,17 +29,29 @@ const oparl = new Oparl({
   // let bodies = await oparl.getBodies();
   // console.log(bodies);
 
+  const bodies = await oparl.bodies;
+  const r = bodies.map(async (body) => {
+    let organizuations = await oparl.getOrganizations(body);
+    console.log({ organizuations });
+    // while (organizuations?.next) {
+    //   organizuations = await organizuations.next();
+    //   console.log(organizuations);
+    // }
+  });
+
+  await Promise.all(r);
+
   // const body = await oparl.body;
   // console.log(body);
 
-  let organizuations = await oparl.getOrganizations();
-  console.log(organizuations);
-  while (organizuations?.next) {
-    organizuations = await organizuations.next().then((data) => {
-      console.log(data);
-      return data;
-    });
-  }
+  // let organizuations = await oparl.getOrganizations();
+  // console.log(organizuations);
+  // while (organizuations?.next) {
+  //   organizuations = await organizuations.next().then((data) => {
+  //     console.log(data);
+  //     return data;
+  //   });
+  // }
 
   // let meetings = await oparl.getMeetings();
   // console.log(meetings);

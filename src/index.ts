@@ -47,7 +47,7 @@ export type DataTypes =
 class Oparl extends Api {
   private _entrypoint: string;
   private _system?: System;
-  private _body?: Body;
+  private _bodies: Body[] = [];
 
   constructor(options: OparlOptions, config?: AxiosRequestConfig) {
     super(options, config);
@@ -71,18 +71,23 @@ class Oparl extends Api {
     })();
   }
 
-  public get body() {
+  public get bodies() {
     return (async () => {
-      if (!this._body) {
-        return await this.getBodies().then((body) => {
-          if (!body) {
-            throw new Error("Error: Cant load body");
+      if (!this._bodies || this._bodies.length === 0) {
+        return await this.getBodies().then(async (bodies) => {
+          if (!bodies) {
+            throw new Error("Error: Cant load bodies");
           }
-          this._body = body?.data[0];
-          return this._body;
+          this._bodies = [...this._bodies, ...bodies.data];
+          let nextBodies = bodies;
+          while (nextBodies.next) {
+            nextBodies = await nextBodies.next();
+            this._bodies = [...this._bodies, ...nextBodies.data];
+          }
+          return this._bodies;
         });
       }
-      return this._body;
+      return this._bodies;
     })();
   }
 
@@ -140,86 +145,66 @@ class Oparl extends Api {
     });
   };
 
-  public getOrganizations = () => {
-    return this.body.then(async (data) => {
-      if (data.organization) {
-        return this.getData<ExternalList<Organization>>(data.organization);
-      }
-    });
+  public getOrganizations = (body: Body) => {
+    if (body.organization) {
+      return this.getData<ExternalList<Organization>>(body.organization);
+    }
   };
 
-  public getMeetings = () => {
-    return this.body.then(async (data) => {
-      if (data.meeting) {
-        return this.getData<ExternalList<Meeting>>(data.meeting);
-      }
-    });
+  public getMeetings = (body: Body) => {
+    if (body.meeting) {
+      return this.getData<ExternalList<Meeting>>(body.meeting);
+    }
   };
 
-  public getLocations = () => {
-    return this.body.then(async (data) => {
-      if (data.locationList) {
-        return this.getData<ExternalList<Location>>(data.locationList);
-      }
-    });
+  public getLocations = (body: Body) => {
+    if (body.locationList) {
+      return this.getData<ExternalList<Location>>(body.locationList);
+    }
   };
 
-  public getPersons = () => {
-    return this.body.then(async (data) => {
-      if (data.person) {
-        return this.getData<ExternalList<Person>>(data.person);
-      }
-    });
+  public getPersons = (body: Body) => {
+    if (body.person) {
+      return this.getData<ExternalList<Person>>(body.person);
+    }
   };
 
-  public getFiles = () => {
-    return this.body.then(async (data) => {
-      if (data.file) {
-        return this.getData<ExternalList<File>>(data.file);
-      }
-    });
+  public getFiles = (body: Body) => {
+    if (body.file) {
+      return this.getData<ExternalList<File>>(body.file);
+    }
   };
 
-  public getPapers = () => {
-    return this.body.then(async (data) => {
-      if (data.paper) {
-        return this.getData<ExternalList<Paper>>(data.paper);
-      }
-    });
+  public getPapers = (body: Body) => {
+    if (body.paper) {
+      return this.getData<ExternalList<Paper>>(body.paper);
+    }
   };
 
-  public getLegislativeTerms = () => {
-    return this.body.then(async (data) => {
-      if (data.legislativeTermList) {
-        return this.getData<ExternalList<LegislativeTerm>>(
-          data.legislativeTermList
-        );
-      }
-    });
+  public getLegislativeTerms = (body: Body) => {
+    if (body.legislativeTermList) {
+      return this.getData<ExternalList<LegislativeTerm>>(
+        body.legislativeTermList
+      );
+    }
   };
 
-  public getAgendaItems = () => {
-    return this.body.then(async (data) => {
-      if (data.agendaItem) {
-        return this.getData<ExternalList<AgendaItem>>(data.agendaItem);
-      }
-    });
+  public getAgendaItems = (body: Body) => {
+    if (body.agendaItem) {
+      return this.getData<ExternalList<AgendaItem>>(body.agendaItem);
+    }
   };
 
-  public getConsultations = () => {
-    return this.body.then(async (data) => {
-      if (data.consultation) {
-        return this.getData<ExternalList<Consultation>>(data.consultation);
-      }
-    });
+  public getConsultations = (body: Body) => {
+    if (body.consultation) {
+      return this.getData<ExternalList<Consultation>>(body.consultation);
+    }
   };
 
-  public getMemberships = () => {
-    return this.body.then(async (data) => {
-      if (data.membership) {
-        return this.getData<ExternalList<Membership>>(data.membership);
-      }
-    });
+  public getMemberships = (body: Body) => {
+    if (body.membership) {
+      return this.getData<ExternalList<Membership>>(body.membership);
+    }
   };
 }
 
