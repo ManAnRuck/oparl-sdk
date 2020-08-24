@@ -96,7 +96,7 @@ export interface Body {
   person: string;
   meeting: string;
   paper: string; // Paper ExternalList
-  legislativeTerm: LegislativeTerm[];
+  legislativeTerm?: LegislativeTerm[];
   agendaItem?: string; // AgendaItem ExternalList
   consultation?: string; // Consultation ExternalList
   file?: string;
@@ -117,9 +117,9 @@ export interface Organization {
   type: string;
   body?: string | Body;
   name?: string;
-  membership?: Membership[];
-  meeting?: Meeting[];
-  consultation?: Consultation;
+  membership?: string[]; // Memberships
+  meeting?: string; // Meetings ExternalList
+  consultation?: string; // Consultations ExternalList
   shortName?: string;
   post?: string[];
   subOrganizationOf?: Organization;
@@ -170,9 +170,9 @@ export interface Person {
   phone?: string[];
   email?: string[];
   location?: string; // Location id
-  locationObject?: any;
+  locationObject?: Location;
   status?: string[];
-  membership?: string[]; // Membership id urls
+  membership?: Membership[]; // Memberships
   image?: any;
   life?: string;
   lifeSource?: string;
@@ -200,7 +200,7 @@ export interface Meeting {
   resultsProtocol?: File;
   verbatimProtocol?: File;
   auxiliaryFile?: File[];
-  agendaItem?: any[];
+  agendaItem?: AgendaItem[];
   license?: string;
   keyword?: string[];
   created?: string;

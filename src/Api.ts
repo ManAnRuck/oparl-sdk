@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import rateLimit from "axios-rate-limit";
 import { RedisStore, setup } from "axios-cache-adapter";
 import axiosRetry, { IAxiosRetryConfig } from "axios-retry";
-const redis = require("redis");
+import redis from "redis";
 
 export interface ApiOptions {
   withCache?: boolean;
